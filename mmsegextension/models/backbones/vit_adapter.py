@@ -6,13 +6,15 @@ from functools import partial
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmsegextension.registry import MODELS as BACKBONES
-# from ops.modules import MSDeformAttn
-from mmsegextension.lib.MultiScaleDeformableAttention.modules import MSDeformAttn
-from timm.models.layers import trunc_normal_, DropPath, Mlp, to_2tuple
 from torch.nn.init import normal_
 import torch.utils.checkpoint as cp
+
 from mmengine.model import BaseModule
+from mmsegextension.registry import MODELS as BACKBONES
+from mmsegextension.lib.MultiScaleDeformableAttention.modules import MSDeformAttn
+# from ops.modules import MSDeformAttn
+from timm.models.layers import trunc_normal_, DropPath, Mlp, to_2tuple
+
 from .adapter_modules import SpatialPriorModule, InteractionBlock, deform_inputs
 
 
@@ -116,6 +118,33 @@ class WindowedAttention(nn.Module):
         x = F.fold(x, output_size=(H_, W_), kernel_size=(self.window_size, self.window_size),
                    stride=(self.window_size, self.window_size))  # [B, C, H_, W_]
         x = x[:, :, :H, :W].reshape(B, C, N).transpose(-1, -2)
+        x = self.proj(x)
+        x = self.proj_drop(x)
+        return x
+
+
+class Attention(nn.Module):
+    def __init__(self, dim, num_heads=8, qkv_bias=False, attn_drop=0., proj_drop=0.):
+        super().__init__()
+        self.num_heads = num_heads
+        head_dim = dim // num_heads
+        self.scale = head_dim ** -0.5
+
+        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
+        self.attn_drop = nn.Dropout(attn_drop)
+        self.proj = nn.Linear(dim, dim)
+        self.proj_drop = nn.Dropout(proj_drop)
+
+    def forward(self, x, H, W):
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv.unbind(0)  # make torchscript happy (cannot use tensor as tuple)
+
+        attn = (q @ k.transpose(-2, -1)) * self.scale
+        attn = attn.softmax(dim=-1)
+        attn = self.attn_drop(attn)
+
+        x = (attn @ v).transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
         x = self.proj_drop(x)
         return x

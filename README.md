@@ -114,6 +114,23 @@ segmentation toolbox based on PyTorch. It is part of the OpenMMLab project.
 
 </details>
 
+### [ViT-CoMer](https://github.com/Traffic-X/ViT-CoMer)
+
+<details>
+<summary> ViT-CoMer ADE20K val </summary>
+<br>
+<div>
+
+| Method  |  Backbone   |                              Pretrain                              | Lr schd | Crop Size | mIoU(SS/MS) | #Param |                               Config                               |                               Ckpt                               |                               Log                               | Support? | our mIoU (SS/MS) | our config                                                               |
+|:-------:|:-----------:|:------------------------------------------------------------------:|:-------:|:---------:|:-----------:|:------:|:------------------------------------------------------------------:|:----------------------------------------------------------------:|:---------------------------------------------------------------:|----------|------------------|--------------------------------------------------------------------------|
+| UperNet | ViT-CoMer-T | [DeiT-T](https://pan.baidu.com/s/1684XaK4dRb8crxb8DRrQ7Q?pwd=fxqa) |  160k   |    512    |   43.5/-    | 38.7M  | [config](https://pan.baidu.com/s/1KxzkLZu8qXi9wfIe3JF04w?pwd=4gjs) | [ckpt](https://pan.baidu.com/s/1J_XgJ058PpK8gqz9E0Caig?pwd=k6mf) | [log](https://pan.baidu.com/s/1qh6xvubnU9Y6bG6UNp22IA?pwd=3p8u) | &#x2714; | 43.66/-          | [config](./configs/vit_comer/upernet_vit_comer_tiny_512_160k_ade20k.py)  |
+| UperNet | ViT-CoMer-S | [DeiT-S](https://pan.baidu.com/s/1HCvcilNKPgCp4gYbsSLQpw?pwd=p4jg) |  160k   |    512    |   46.5/-    | 61.4M  | [config](https://pan.baidu.com/s/1H3PC01bMQvquRLvd4JHuuA?pwd=kgyy) | [ckpt](https://pan.baidu.com/s/1CDfKeUzCTs5fB0ggy9wYwg?pwd=puqi) | [log](https://pan.baidu.com/s/1nci50aHO0ma3YgIzH-z9NQ?pwd=cxdj) | &#x2714; | 46.09/46.23      | [config](./configs/vit_comer/upernet_vit_comer_small_512_160k_ade20k.py) |
+| UperNet | ViT-CoMer-B | [DeiT-S](https://pan.baidu.com/s/1XuTrT95i1XC52bzYeFdIQw?pwd=9kab) |  160k   |    512    |   48.8/-    | 144.7M |                                 -                                  |                                -                                 |                                -                                | &#x2714; | -/-              | [config](./configs/vit_comer/upernet_vit_comer_base_512_160k_ade20k.py)  |
+
+</div>
+
+</details>
+
 ## Why are the test results inconsistent with the original repository?
 
 1. **Changes in PyTorch version**
