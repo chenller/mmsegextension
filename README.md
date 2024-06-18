@@ -33,10 +33,10 @@ segmentation toolbox based on PyTorch. It is part of the OpenMMLab project.
 ## Supported repositories
 
 - [ViT-Adapter](https://github.com/czczup/ViT-Adapter)
-
+- [ViT-CoMer](https://github.com/Traffic-X/ViT-CoMer) 
 ### TODO
 
-- [ ] Support [ViT-CoMer](https://github.com/Traffic-X/ViT-CoMer) semantic segmentation
+- [x] Support [ViT-CoMer](https://github.com/Traffic-X/ViT-CoMer) semantic segmentation
 - [ ] Support [InternImage](https://github.com/OpenGVLab/InternImage) semantic segmentation
 - [x] Support [ViT-Adapter](https://github.com/czczup/ViT-Adapter) semantic segmentation
 
