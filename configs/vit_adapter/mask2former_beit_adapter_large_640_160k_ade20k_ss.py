@@ -1,5 +1,5 @@
 _base_ = [
-    'mmseg::_base_/datasets/ade20k.py',
+    'mmsegextension::_base_/datasets/ade20k_640_tta_without_ratio.py',
     'mmseg::_base_/default_runtime.py',
     'mmseg::_base_/schedules/schedule_80k.py'
 ]
@@ -172,43 +172,7 @@ model = dict(
     test_cfg=dict(mode='slide', crop_size=(640, 640), stride=(426, 426)),
 )
 
-train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', reduce_zero_label=True),
-    dict(
-        type='RandomResize',
-        scale=(2048, 640),
-        ratio_range=(0.5, 2.0),
-        keep_ratio=True),
-    dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
-    dict(type='RandomFlip', prob=0.5),
-    dict(type='PhotoMetricDistortion'),
-    dict(type='PackSegInputs')
-]
-test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='Resize', scale=(2048, 640), keep_ratio=True),
-    dict(type='LoadAnnotations', reduce_zero_label=True),
-    dict(type='PackSegInputs')
-]
-data_root = '/home/yansu/dataset/mmseg/ADEChallengeData2016/'
-train_dataloader = dict(batch_size=2, num_workers=4, dataset=dict(data_root=data_root, pipeline=train_pipeline))
-val_dataloader = dict(batch_size=1, num_workers=4, dataset=dict(data_root=data_root, pipeline=test_pipeline))
-test_dataloader = val_dataloader
-tta_pipeline = [
-    dict(type='LoadImageFromFile', backend_args=None),
-    dict(
-        type='TestTimeAug', _scope_='mmseg',
-        transforms=[
-            [dict(type='Resize', scale=(2048, 640), keep_ratio=True)],
-            [
-                dict(type='RandomFlip', prob=0., direction='horizontal'),
-                dict(type='RandomFlip', prob=1., direction='horizontal')
-            ],
-            [dict(type='LoadAnnotations')], [dict(type='PackSegInputs')]
-        ])
-]
-optim_wrapper = dict(type='AmpOptimWrapper', )
-cfg = dict(
-    activation_checkpointing=[f'decode_head', 'backbone']
-)
+# optim_wrapper = dict(type='AmpOptimWrapper', )
+# cfg = dict(
+#     activation_checkpointing=[f'decode_head', 'backbone']
+# )

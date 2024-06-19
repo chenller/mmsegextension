@@ -1,5 +1,5 @@
 _base_ = [
-    'mmsegextension::_base_/datasets/ade20k_512_tta_without_ratio.py',
+    'mmsegextension::_base_/datasets/ade20k_640_tta_without_ratio.py',
     'mmseg::_base_/default_runtime.py',
     'mmseg::_base_/schedules/schedule_80k.py'
 ]
@@ -7,7 +7,6 @@ crop_size = (896, 896)
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 data_preprocessor = dict(
     type='SegDataPreProcessor',
-    _scope_='mmseg',
     size=crop_size,
     mean=[123.675, 116.28, 103.53],
     std=[58.395, 57.12, 57.375],
@@ -17,9 +16,8 @@ data_preprocessor = dict(
 num_classes = 150
 model = dict(
     type='EncoderDecoder',
-    data_preprocessor=data_preprocessor,
     backbone=dict(
-        type='BEiTAdapter', _scope_='mmsegextension',
+        type='BEiTAdapter',_scope_='mmsegextension',
         img_size=896,
         patch_size=16,
         embed_dim=1024,
@@ -36,7 +34,7 @@ model = dict(
         deform_num_heads=16,
         cffn_ratio=0.25,
         deform_ratio=0.5,
-        with_cp=True,  # set with_cp=True to save memory
+        with_cp=True, # set with_cp=True to save memory
         interaction_indexes=[[0, 5], [6, 11], [12, 17], [18, 23]],
     ),
     decode_head=dict(
@@ -51,7 +49,6 @@ model = dict(
         num_queries=200,
         num_transformer_feat_level=3,
         pixel_decoder=dict(
-            # _scope_='mmdet',
             type='MSDeformAttnPixelDecoder',
             num_outs=3,
             norm_cfg=dict(type='GN', num_groups=32),
@@ -148,7 +145,6 @@ model = dict(
             naive_dice=True,
             eps=1.0,
             loss_weight=5.0),
-
         train_cfg=dict(
             num_points=12544,
             oversample_ratio=3.0,
@@ -160,7 +156,7 @@ model = dict(
                     type='CrossEntropyLossCost', weight=5.0, use_sigmoid=True),
                 dice_cost=dict(
                     type='DiceCost', weight=5.0, pred_act=True, eps=1.0)),
-            sampler=dict(type='MaskPseudoSampler', _scope_='mmdet')),
+            sampler=dict(type='MaskPseudoSampler', _scope_='mmdet', )),
         test_cfg=dict(
             panoptic_on=True,
             semantic_on=False,
@@ -175,6 +171,7 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='slide', crop_size=(896, 896), stride=(512, 512)),
 )
+
 crop_size = (896, 896)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -212,7 +209,3 @@ tta_pipeline = [
             [dict(type='LoadAnnotations')], [dict(type='PackSegInputs')]
         ])
 ]
-# optim_wrapper = dict(type='AmpOptimWrapper', )
-# cfg = dict(
-#     activation_checkpointing=[f'decode_head', 'backbone']
-# )

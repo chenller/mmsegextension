@@ -11,23 +11,25 @@ data_preprocessor = dict(
     bgr_to_rgb=True,
     pad_val=0,
     seg_pad_val=255)
+
 model = dict(
+    _delete_=True,
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
-    # pretrained='path/to/pretrained',
+    pretrained='pretrained/deit_tiny_patch16_224-a1311bcf.pth',
     backbone=dict(
-        type='ViTAdapter', _scope_='mmsegextension',
+        type='ViTAdapter',
         patch_size=16,
-        embed_dim=768,
+        embed_dim=192,
         depth=12,
-        num_heads=12,
+        num_heads=3,
         mlp_ratio=4,
-        drop_path_rate=0.3,
+        drop_path_rate=0.1,
         conv_inplane=64,
         n_points=4,
-        deform_num_heads=12,
+        deform_num_heads=6,
         cffn_ratio=0.25,
-        deform_ratio=0.5,
+        deform_ratio=1.0,
         interaction_indexes=[[0, 2], [3, 5], [6, 8], [9, 11]],
         window_attn=[
             False, False, False, False, False, False, False, False, False,
@@ -39,7 +41,7 @@ model = dict(
         ]),
     decode_head=dict(
         type='UPerHead',
-        in_channels=[768, 768, 768, 768],
+        in_channels=[192, 192, 192, 192],
         in_index=[0, 1, 2, 3],
         pool_scales=(1, 2, 3, 6),
         channels=512,
@@ -51,7 +53,7 @@ model = dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
     auxiliary_head=dict(
         type='FCNHead',
-        in_channels=768,
+        in_channels=192,
         in_index=2,
         channels=256,
         num_convs=1,
@@ -63,5 +65,4 @@ model = dict(
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
     train_cfg=dict(),
-    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341))
-)
+    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(341, 341)))
