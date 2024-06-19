@@ -1,9 +1,18 @@
 _base_ = [
     'mmsegextension::vit_adapter/upernet_deit_adapter_base_512_160k_ade20k.py'
 ]
-
+crop_size = (512, 512)
+data_preprocessor = dict(
+    type='SegDataPreProcessor',
+    size=crop_size,
+    mean=[123.675, 116.28, 103.53],
+    std=[58.395, 57.12, 57.375],
+    bgr_to_rgb=True,
+    pad_val=0,
+    seg_pad_val=255)
 model = dict(
     type='EncoderDecoder',
+    data_preprocessor=data_preprocessor,
     # pretrained=
     # 'pretrained/B_16-i21k-300ep-lr_0.001-aug_medium1-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_384.pth',
     backbone=dict(

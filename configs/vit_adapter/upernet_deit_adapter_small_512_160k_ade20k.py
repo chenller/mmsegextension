@@ -1,12 +1,22 @@
 _base_ = [
     'mmsegextension::vit_adapter/upernet_deit_adapter_base_512_160k_ade20k.py'
 ]
+crop_size = (512, 512)
+data_preprocessor = dict(
+    type='SegDataPreProcessor',
+    size=crop_size,
+    mean=[123.675, 116.28, 103.53],
+    std=[58.395, 57.12, 57.375],
+    bgr_to_rgb=True,
+    pad_val=0,
+    seg_pad_val=255)
 model = dict(
+    _delete_=True,
     type='EncoderDecoder',
+    data_preprocessor=data_preprocessor,
     pretrained=None,
     backbone=dict(
-        _delete_=True,
-        type='ViTAdapter',
+        type='ViTAdapter', _scope_='mmsegextension',
         patch_size=16,
         embed_dim=384,
         depth=12,
